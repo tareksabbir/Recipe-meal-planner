@@ -1,5 +1,4 @@
-// src/components/shoppingList/ShoppingList.tsx - CORRECTED VERSION
-import { useMemo, useEffect } from "react"; // Removed useState
+import { useMemo, useEffect } from "react";
 import { useMealPlan } from "../../hooks/useMealPlan";
 import { useQuery } from "@tanstack/react-query";
 import { recipeApi } from "../../services/api";
@@ -7,7 +6,13 @@ import { useShoppingList } from "../../hooks/useShoppingList";
 import type { ShoppingListItem as ShoppingListItemType } from "../../types";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import { ErrorMessage } from "../common/ErrorMessage";
-import { ShoppingCart, Trash2, Check, CheckCircle2 } from "lucide-react";
+import {
+  ShoppingCart,
+  Trash2,
+  Check,
+  CheckCircle2,
+  ChevronLeft,
+} from "lucide-react";
 import {
   parseQuantity,
   normalizeUnit,
@@ -15,7 +20,11 @@ import {
   formatQuantity,
 } from "../../utils/ingredientUtils";
 
-export const ShoppingList = () => {
+interface ShoppingListProps {
+  onNavigateToDiscover: () => void;
+}
+
+export const ShoppingList = ({ onNavigateToDiscover }: ShoppingListProps) => {
   const { recipeIds } = useMealPlan();
   const {
     shoppingList,
@@ -51,8 +60,6 @@ export const ShoppingList = () => {
         if (ingredientMap.has(key)) {
           const existing = ingredientMap.get(key)!;
           existing.recipeIds.push(recipe.idMeal);
-
-          // Parse quantities and units
           const existingMeasure = parseQuantity(existing.measure);
           const newMeasure = parseQuantity(ingredient.measure);
 
@@ -66,19 +73,17 @@ export const ShoppingList = () => {
               existingMeasure.quantity + newMeasure.quantity;
             existing.measure = formatQuantity(totalQuantity, existingUnit);
           } else {
-            // Try to convert to the more common unit (or existing unit)
+            // Try to convert to a more common unit (or existing unit)
             const convertedQuantity = convertUnit(
               newMeasure.quantity,
               newUnit,
               existingUnit
             );
             if (convertedQuantity !== newMeasure.quantity) {
-              // Conversion successful
               const totalQuantity =
                 existingMeasure.quantity + convertedQuantity;
               existing.measure = formatQuantity(totalQuantity, existingUnit);
             } else {
-              // Conversion failed, just concatenate with a separator
               existing.measure = `${existing.measure} + ${ingredient.measure}`;
             }
           }
@@ -99,13 +104,10 @@ export const ShoppingList = () => {
     );
   }, [recipes, purchasedItems]);
 
-  // This effect syncs the generated list with the persistent store in the context.
-  // It runs whenever the meal plan (and thus the generated list) changes.
   useEffect(() => {
     addOrUpdateItems(generatedShoppingList);
   }, [generatedShoppingList, addOrUpdateItems]);
 
-  // Empty state when no meals planned
   if (recipeIds.length === 0) {
     return (
       <div className="text-center py-16 bg-white rounded-xl">
@@ -118,6 +120,12 @@ export const ShoppingList = () => {
         <p className="text-gray-500 mb-6">
           Add meals to your weekly plan to generate a shopping list
         </p>
+        <button
+          onClick={onNavigateToDiscover}
+          className="bg-emerald-500 text-white px-6 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-medium"
+        >
+          Discover Recipes
+        </button>
       </div>
     );
   }
@@ -126,53 +134,38 @@ export const ShoppingList = () => {
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <div className="bg-white rounded-xl shadow-sm p-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-          <div>
+        <div className="flex items-center gap-4 ">
+          <button
+            onClick={onNavigateToDiscover}
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+            title="Back to Discover"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <div className="flex-1">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-              Shopping List
+              Shoping List
             </h2>
             <p className="text-gray-600 mt-1">
               {stats.totalCount} items • {stats.purchasedCount} purchased
             </p>
           </div>
           {stats.purchasedCount > 0 && (
-            <button
-              onClick={clearPurchased}
-              className="text-red-600 hover:text-red-800 text-sm flex items-center gap-2 font-medium"
-            >
-              <Trash2 className="w-4 h-4" />
-              Clear Purchased
-            </button>
+            <div className="flex items-center justify-end">
+              <button
+                onClick={clearPurchased}
+                className="text-red-600 hover:text-red-800 text-sm flex items-center gap-2 font-medium"
+              >
+                <Trash2 className="w-4 h-4" />
+                Clear Purchased
+              </button>
+            </div>
           )}
         </div>
-
-        {/* Progress Bar */}
-        {stats.totalCount > 0 && (
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-medium text-gray-700">
-                Shopping Progress
-              </span>
-              <span className="text-sm font-semibold text-emerald-600">
-                {Math.round(stats.progressPercentage)}%
-              </span>
-            </div>
-            <div className="bg-gray-200 rounded-full h-3 overflow-hidden">
-              <div
-                className="bg-linear-to-r from-emerald-500 to-emerald-600 h-full transition-all duration-300 ease-out"
-                style={{ width: `${stats.progressPercentage}%` }}
-              />
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Loading State */}
-      {isLoading && (
-        <div className="bg-white rounded-xl shadow-sm p-12">
-          <LoadingSpinner />
-        </div>
-      )}
+      {isLoading && <LoadingSpinner />}
 
       {/* Error State */}
       {error && (
@@ -187,10 +180,31 @@ export const ShoppingList = () => {
       {/* Shopping List */}
       {shoppingList.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm p-6">
+          {/* Progress Bar */}
+          {stats.totalCount > 0 && (
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-medium text-gray-700">
+                  Shopping Progress
+                </span>
+                <span className="text-sm font-semibold text-emerald-600">
+                  {Math.round(stats.progressPercentage)}%
+                </span>
+              </div>
+              <div className="bg-gray-200 rounded-full h-3 overflow-hidden">
+                <div
+                  className="bg-linear-to-r from-emerald-500 to-emerald-600 h-full transition-all duration-300 ease-out"
+                  style={{ width: `${stats.progressPercentage}%` }}
+                />
+              </div>
+            </div>
+          )}
+
           <div className="space-y-2">
             {shoppingList.map((item) => (
               <div
                 key={item.id}
+                onClick={() => togglePurchased(item.id)}
                 className={`flex items-center gap-4 p-4 rounded-lg border-2 transition-all ${
                   purchasedItems.has(item.id)
                     ? "bg-emerald-50 border-emerald-200 opacity-60"
@@ -198,7 +212,6 @@ export const ShoppingList = () => {
                 }`}
               >
                 <button
-                  onClick={() => togglePurchased(item.id)}
                   className={`shrink-0 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all ${
                     purchasedItems.has(item.id)
                       ? "bg-emerald-500 border-emerald-500"

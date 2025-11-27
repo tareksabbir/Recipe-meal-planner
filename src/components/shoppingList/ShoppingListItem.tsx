@@ -1,4 +1,3 @@
-// src/components/shoppingList/ShoppingListItem.tsx
 import React from "react";
 import type { ShoppingListItem as ShoppingListItemType } from "../../types";
 import { Check } from "lucide-react";
