@@ -1,15 +1,14 @@
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { useCategories } from "../../hooks/useCategories";
-import { LoadingSpinner } from "../common/LoadingSpinner";
 import { ErrorMessage } from "../common/ErrorMessage";
+import CategorySkeleton from "../common/CategorySkeleton";
 
 interface CategoriesProps {
   activeCategory: string;
   onCategoryChange: (category: string) => void;
 }
 
-// Category icons mapping
 const categoryIcons: Record<string, string> = {
   all: "🍽️",
   Beef: "🥩",
@@ -29,10 +28,7 @@ const categoryIcons: Record<string, string> = {
 };
 
 const Categories = ({ activeCategory, onCategoryChange }: CategoriesProps) => {
-  // State to track whether to show all categories
   const [showAllCategories, setShowAllCategories] = useState(false);
-
-  // Fetch categories from API with localStorage caching
   const { data: categories, isLoading, error, refetch } = useCategories();
   const allCategories = [
     { strCategory: "all", icon: categoryIcons["all"] },
@@ -52,24 +48,14 @@ const Categories = ({ activeCategory, onCategoryChange }: CategoriesProps) => {
         })) || []),
       ];
 
-  // Handle "See All" button click
   const handleSeeAllClick = () => {
     setShowAllCategories(!showAllCategories);
   };
 
-  // Loading state
   if (isLoading) {
-    return (
-      <div className="mb-6 md:mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg md:text-xl font-semibold">Categories</h3>
-        </div>
-        <LoadingSpinner />
-      </div>
-    );
+    return <CategorySkeleton />;
   }
 
-  // Error state
   if (error) {
     return (
       <div className="mb-6 md:mb-8">
