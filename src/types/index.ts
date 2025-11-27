@@ -1,4 +1,4 @@
-// ekhane type gulo k meal db er api rsponse er key gulor name er sathe miliye likha hoise like recipi jokhon check kortesilam tokhon recipi er josn response aschee tar sathe miliye rakhar chesta korsi jate gol mal pakiye na feli 
+// ekhane type gulo k meal db er api rsponse er key gulor name er sathe miliye likha hoise like recipi jokhon check kortesilam tokhon recipi er josn response aschee tar sathe miliye rakhar chesta korsi jate gol mal pakiye na feli
 
 export interface Recipe {
   idMeal: string;
