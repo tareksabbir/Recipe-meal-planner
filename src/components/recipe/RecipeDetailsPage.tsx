@@ -21,13 +21,17 @@ import { ErrorMessage } from "../common/ErrorMessage";
 interface RecipeDetailsPageProps {
   recipeId: string;
   onBack: () => void;
-  onMealAdded?: () => void; 
+  onMealAdded?: () => void;
+  isBookmarked?: boolean;
+  onBookmarkToggle?: (id: string) => void;
 }
 
 export const RecipeDetailsPage: React.FC<RecipeDetailsPageProps> = ({
   recipeId,
   onBack,
-  onMealAdded, 
+  onMealAdded,
+  isBookmarked = false,
+  onBookmarkToggle,
 }) => {
   const {
     data: recipe,
@@ -38,7 +42,6 @@ export const RecipeDetailsPage: React.FC<RecipeDetailsPageProps> = ({
   const { weekDates, addMeal } = useMealPlan();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
-  const [isBookmarked, setIsBookmarked] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
 
   const handleAddToMealPlan = (date: string) => {
@@ -54,15 +57,14 @@ export const RecipeDetailsPage: React.FC<RecipeDetailsPageProps> = ({
     }
   };
 
-  // Rest of the component remains the same...
   const toggleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
-    // Here you would also call an API to save the bookmark
+    if (onBookmarkToggle) {
+      onBookmarkToggle(recipeId);
+    }
   };
 
   const toggleLike = () => {
     setIsLiked(!isLiked);
-    // Here you would also call an API to save the like
   };
 
   const shareRecipe = () => {
@@ -73,7 +75,6 @@ export const RecipeDetailsPage: React.FC<RecipeDetailsPageProps> = ({
         url: window.location.href,
       });
     } else {
-      // Fallback for browsers that don't support the Web Share API
       navigator.clipboard.writeText(window.location.href);
       alert("Recipe link copied to clipboard!");
     }
