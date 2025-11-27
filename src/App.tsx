@@ -1,6 +1,4 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-// src/App.tsx
-
 import { useState, useEffect } from "react";
 import Sidebar from "./components/sidebar/Sidebar";
 import Header from "./components/header/Header";
@@ -9,13 +7,13 @@ import Categories from "./components/categories/Categories";
 import RecipeGrid from "./components/recipe/RecipeGrid";
 import { ShoppingList } from "./components/shoppingList/ShoppingList";
 import { useRecipes } from "./hooks/useRecipes";
-import { LoadingSpinner } from "./components/common/LoadingSpinner";
 import { ErrorMessage } from "./components/common/ErrorMessage";
 import { WeeklyMealPlan } from "./components/mealPlan/WeeklyMealPlan";
 import { RecipeDetailsPage } from "./components/recipe/RecipeDetailsPage";
+import { BookmarksPage } from "./components/bookmark/BookmarksPage";
 import BookmarkNotification from "./components/bookmark/BookmarkNotification";
-
-type View = "discover" | "mealplan" | "shopping" | "recipe-details";
+import type { View, Recipe } from "./types";
+import RecipeCardSkeleton from "./components/common/RecipeCardSkeleton";
 
 const App = () => {
   const [activeView, setActiveView] = useState<View>("discover");
@@ -37,12 +35,37 @@ const App = () => {
     refetch,
   } = useRecipes(searchQuery, activeCategory);
 
+  // Load bookmarks from localStorage on component mount
+  useEffect(() => {
+    const savedBookmarks = localStorage.getItem("bookmarkedRecipes");
+    if (savedBookmarks) {
+      try {
+        const parsedBookmarks = JSON.parse(savedBookmarks);
+        setBookmarkedRecipes(new Set(parsedBookmarks));
+      } catch (error) {
+        console.error("Error loading bookmarks:", error);
+      }
+    }
+  }, []);
+
+  // Save bookmarks to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        "bookmarkedRecipes",
+        JSON.stringify(Array.from(bookmarkedRecipes))
+      );
+    } catch (error) {
+      console.error("Error saving bookmarks:", error);
+    }
+  }, [bookmarkedRecipes]);
+
   // Reset to page 1 whenever search or category changes
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, activeCategory]);
 
-  // NEW: Reset category to "all" when a search query is entered
+  // Reset category to "all" when a search query is entered
   useEffect(() => {
     if (searchQuery.trim()) {
       setActiveCategory("all");
@@ -57,7 +80,7 @@ const App = () => {
       } else {
         newSet.add(recipeId);
         setShowBookmarkNotification(true);
-        setTimeout(() => setShowBookmarkNotification(false), 3000);
+        setTimeout(() => setShowBookmarkNotification(false), 5000);
       }
       return newSet;
     });
@@ -72,8 +95,18 @@ const App = () => {
     setActiveView("discover");
   };
 
+  const handleBackToBookmarks = () => {
+    setActiveView("bookmarks");
+  };
+
   const handleMealAdded = () => {
     setActiveView("mealplan");
+  };
+
+  // Filter recipes to get only bookmarked ones
+  const getBookmarkedRecipes = (): Recipe[] => {
+    if (!recipes) return [];
+    return recipes.filter((recipe) => bookmarkedRecipes.has(recipe.idMeal));
   };
 
   return (
@@ -100,29 +133,23 @@ const App = () => {
           {/* Conditional Content Based on Active View */}
           {activeView === "discover" && (
             <>
-              {/* Header */}
               <Header
                 onMenuClick={() => setSidebarOpen(true)}
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
               />
-              {/* Featured Recipe */}
               <FeaturedRecipe />
-              {/* Categories */}
               <Categories
                 activeCategory={activeCategory}
                 onCategoryChange={setActiveCategory}
               />
-              {/* Loading State */}
-              {isLoading && <LoadingSpinner />}
-              {/* Error State */}
+              {isLoading && <RecipeCardSkeleton />}
               {error && (
                 <ErrorMessage
                   message="Failed to load recipes. Please try again."
                   onRetry={() => refetch()}
                 />
               )}
-              {/* Recipe Grid */}
               {recipes && recipes.length > 0 && (
                 <RecipeGrid
                   recipes={recipes}
@@ -132,11 +159,9 @@ const App = () => {
                   activeCategory={activeCategory}
                   currentPage={currentPage}
                   onPageChange={setCurrentPage}
-                  // NEW: Pass searchQuery for title display
                   searchQuery={searchQuery}
                 />
               )}
-              {/* Empty State */}
               {recipes && recipes.length === 0 && !isLoading && (
                 <div className="text-center py-12">
                   <p className="text-gray-500 text-lg">
@@ -146,13 +171,32 @@ const App = () => {
               )}
             </>
           )}
-          {activeView === "mealplan" && <WeeklyMealPlan />}
-          {activeView === "shopping" && <ShoppingList />}
+          {activeView === "mealplan" && (
+            <WeeklyMealPlan onNavigateToDiscover={handleBackToDiscover} />
+          )}
+          {activeView === "shopping" && (
+            <ShoppingList onNavigateToDiscover={handleBackToDiscover} />
+          )}
+          {activeView === "bookmarks" && (
+            <BookmarksPage
+              bookmarkedRecipes={getBookmarkedRecipes()}
+              bookmarkedIds={bookmarkedRecipes}
+              onBookmarkToggle={toggleBookmark}
+              onViewDetails={handleViewRecipeDetails}
+              onBack={handleBackToDiscover}
+            />
+          )}
           {activeView === "recipe-details" && selectedRecipeId && (
             <RecipeDetailsPage
               recipeId={selectedRecipeId}
-              onBack={handleBackToDiscover}
+              onBack={
+                window.history.state?.from === "bookmarks"
+                  ? handleBackToBookmarks
+                  : handleBackToDiscover
+              }
               onMealAdded={handleMealAdded}
+              isBookmarked={bookmarkedRecipes.has(selectedRecipeId)}
+              onBookmarkToggle={toggleBookmark}
             />
           )}
         </div>
@@ -161,6 +205,10 @@ const App = () => {
       <BookmarkNotification
         show={showBookmarkNotification}
         onClose={() => setShowBookmarkNotification(false)}
+        onNavigate={() => {
+          setActiveView("bookmarks");
+          setShowBookmarkNotification(false);
+        }}
       />
     </div>
   );
