@@ -37,7 +37,7 @@ const BookmarkNotification: React.FC<BookmarkNotificationProps> = ({
       </div>
 
       {/* Desktop Sidebar Notification */}
-      <aside className="hidden md:block fixed top-4 right-4 w-80 bg-white p-6 border border-gray-200 rounded-lg shadow-lg z-40 animate-pulse">
+      <aside className="hidden md:block fixed top-4 right-4 w-80 bg-white p-6 border border-gray-200 rounded-lg shadow-lg z-40 ">
         <div className="text-center">
           <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Bookmark className="text-emerald-600" size={32} />

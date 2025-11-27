@@ -1,4 +1,3 @@
-// src/components/bookmarks/BookmarksPage.tsx
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, Bookmark } from "lucide-react";
 
@@ -23,25 +22,25 @@ export const BookmarksPage: React.FC<BookmarksPageProps> = ({
   onBack,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   // Calculate pagination details
   const totalPages = Math.ceil(bookmarkedRecipes.length / RECIPES_PER_PAGE);
   const startIndex = (currentPage - 1) * RECIPES_PER_PAGE;
   const endIndex = startIndex + RECIPES_PER_PAGE;
-  
+
   // Get the recipes for the current page
   const paginatedRecipes = bookmarkedRecipes.slice(startIndex, endIndex);
-  
+
   const handlePrevPage = () => {
     setCurrentPage(currentPage - 1);
   };
-  
+
   const handleNextPage = () => {
     setCurrentPage(currentPage + 1);
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-4 md:p-8">
+    <div className="container mx-auto p-4 md:p-8">
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center">
@@ -64,9 +63,12 @@ export const BookmarksPage: React.FC<BookmarksPageProps> = ({
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Bookmark className="w-8 h-8 text-gray-400" />
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No bookmarks yet</h3>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            No bookmarks yet
+          </h3>
           <p className="text-gray-600 mb-6 max-w-md mx-auto">
-            Start bookmarking your favorite recipes to see them here. Tap the bookmark icon on any recipe to save it.
+            Start bookmarking your favorite recipes to see them here. Tap the
+            bookmark icon on any recipe to save it.
           </p>
           <button
             onClick={onBack}
@@ -90,7 +92,11 @@ export const BookmarksPage: React.FC<BookmarksPageProps> = ({
                 <span className="text-emerald-600 font-medium">
                   {paginatedRecipes.length}
                 </span>{" "}
-                of <span className="text-emerald-600 font-medium">{bookmarkedRecipes.length}</span> bookmarked recipes
+                of{" "}
+                <span className="text-emerald-600 font-medium">
+                  {bookmarkedRecipes.length}
+                </span>{" "}
+                bookmarked recipes
               </p>
             </div>
             {totalPages > 1 && (
