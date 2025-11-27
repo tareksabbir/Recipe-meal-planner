@@ -1,12 +1,16 @@
-import React from 'react';
-import { Bookmark, X } from 'lucide-react';
+import React from "react";
+import { Bookmark, X } from "lucide-react";
 
 interface BookmarkNotificationProps {
   show: boolean;
   onClose: () => void;
+  onNavigate?: () => void;
 }
 
-const BookmarkNotification: React.FC<BookmarkNotificationProps> = ({ show, onClose }) => {
+const BookmarkNotification: React.FC<BookmarkNotificationProps> = ({
+  show,
+  onClose,
+}) => {
   if (!show) return null;
 
   return (
@@ -23,7 +27,7 @@ const BookmarkNotification: React.FC<BookmarkNotificationProps> = ({ show, onClo
               <p className="text-sm text-gray-500">Recipe saved successfully</p>
             </div>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="p-1 rounded-full hover:bg-gray-100"
           >
@@ -31,21 +35,17 @@ const BookmarkNotification: React.FC<BookmarkNotificationProps> = ({ show, onClo
           </button>
         </div>
       </div>
-      
+
       {/* Desktop Sidebar Notification */}
-      <aside className="hidden md:block w-80 bg-white p-6 border-l border-gray-200 animate-pulse">
+      <aside className="hidden md:block fixed top-4 right-4 w-80 bg-white p-6 border border-gray-200 rounded-lg shadow-lg z-40 animate-pulse">
         <div className="text-center">
           <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Bookmark className="text-emerald-600" size={32} />
           </div>
           <p className="text-gray-600 mb-1">You have a new</p>
-          <p className="text-gray-900 font-semibold mb-4">content in your bookmark</p>
-          <button 
-            onClick={onClose}
-            className="text-emerald-500 hover:underline font-medium"
-          >
-            See bookmark
-          </button>
+          <p className="text-gray-900 font-semibold mb-4">
+            recipe in your bookmarks
+          </p>
         </div>
       </aside>
     </>
