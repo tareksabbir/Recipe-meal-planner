@@ -67,37 +67,4 @@ export const recipeApi = {
     const results = await Promise.all(promises);
     return results.filter((recipe): recipe is RecipeDetail => recipe !== null);
   },
-
-  /**
-   * NEW: Fetches all available recipes by querying each letter of the alphabet.
-   * This is the most reliable way to get a full list of meals from TheMealDB.
-   */
-  getAllRecipes: async (): Promise<RecipesResponse> => {
-    const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
-    
-    // Create an array of promises, one for each letter
-    const promises = alphabet.map(letter =>
-      fetch(`${BASE_URL}/filter.php?a=${letter}`)
-        .then(res => {
-          if (!res.ok) {
-            console.error(`Failed to fetch recipes for letter: ${letter}`);
-            return { meals: [] }; // Return empty array on failure to not break Promise.all
-          }
-          return res.json() as Promise<RecipesResponse>;
-        })
-    );
-
-    // Wait for all 26 requests to complete
-    const results = await Promise.all(promises);
-
-    // Combine all the meal arrays into a single array
-    const allMeals = results.flatMap(result => result.meals || []);
-
-    // Deduplicate recipes by their unique ID
-    const uniqueMeals = Array.from(
-      new Map(allMeals.map(meal => [meal.idMeal, meal])).values()
-    );
-
-    return { meals: uniqueMeals };
-  },
 };
