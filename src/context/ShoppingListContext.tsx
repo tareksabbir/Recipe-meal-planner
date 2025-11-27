@@ -1,5 +1,9 @@
-// src/context/ShoppingListContext.tsx - FIXED VERSION
-import React, { createContext, useContext, useEffect, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useCallback,
+} from "react";
 import type { ShoppingListItem } from "../types";
 
 interface ShoppingListContextType {
@@ -45,8 +49,12 @@ const loadInitialPurchasedItems = (): Set<string> => {
 export const ShoppingListProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [shoppingList, setShoppingList] = React.useState<ShoppingListItem[]>(loadInitialShoppingList);
-  const [purchasedItems, setPurchasedItems] = React.useState<Set<string>>(loadInitialPurchasedItems);
+  const [shoppingList, setShoppingList] = React.useState<ShoppingListItem[]>(
+    loadInitialShoppingList
+  );
+  const [purchasedItems, setPurchasedItems] = React.useState<Set<string>>(
+    loadInitialPurchasedItems
+  );
 
   // Save shopping list to localStorage whenever it changes
   useEffect(() => {
@@ -55,12 +63,15 @@ export const ShoppingListProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Save purchased items to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem(PURCHASED_ITEMS_KEY, JSON.stringify(Array.from(purchasedItems)));
+    localStorage.setItem(
+      PURCHASED_ITEMS_KEY,
+      JSON.stringify(Array.from(purchasedItems))
+    );
   }, [purchasedItems]);
 
   const addItem = useCallback((item: ShoppingListItem) => {
-    setShoppingList(prev => {
-      const existingIndex = prev.findIndex(i => i.id === item.id);
+    setShoppingList((prev) => {
+      const existingIndex = prev.findIndex((i) => i.id === item.id);
       if (existingIndex >= 0) {
         // Update existing item
         const updated = [...prev];
@@ -73,19 +84,20 @@ export const ShoppingListProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const removeItem = useCallback((id: string) => {
-    setShoppingList(prev => prev.filter(item => item.id !== id));
+    setShoppingList((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
-  const updateItem = useCallback((id: string, updates: Partial<ShoppingListItem>) => {
-    setShoppingList(prev => 
-      prev.map(item => 
-        item.id === id ? { ...item, ...updates } : item
-      )
-    );
-  }, []);
+  const updateItem = useCallback(
+    (id: string, updates: Partial<ShoppingListItem>) => {
+      setShoppingList((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, ...updates } : item))
+      );
+    },
+    []
+  );
 
   const togglePurchased = useCallback((id: string) => {
-    setPurchasedItems(prev => {
+    setPurchasedItems((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
         newSet.delete(id);
@@ -127,7 +139,9 @@ export const ShoppingListProvider: React.FC<{ children: React.ReactNode }> = ({
 export const useShoppingListContext = () => {
   const context = useContext(ShoppingListContext);
   if (!context) {
-    throw new Error("useShoppingListContext must be used within ShoppingListProvider");
+    throw new Error(
+      "useShoppingListContext must be used within ShoppingListProvider"
+    );
   }
   return context;
 };
