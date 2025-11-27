@@ -47,7 +47,7 @@ export const useRecipes = (searchQuery: string, category: string) => {
     queryFn: async (): Promise<Recipe[]> => {
       // Check cache first
       const cachedData = getCachedRecipes(searchQuery, category);
-      if (cachedData) {
+      if (cachedData && cachedData.length > 0) {
         return cachedData;
       }
 
@@ -57,14 +57,18 @@ export const useRecipes = (searchQuery: string, category: string) => {
       } else if (category && category !== "all") {
         data = await recipeApi.filterByCategory(category);
       } else {
-        data = await recipeApi.searchRecipes("a");
+        data = await recipeApi.getAllRecipes();
       }
 
       const recipes = data.meals || [];
-      cacheRecipes(searchQuery, category, recipes);
+
+      if (recipes.length > 0) {
+        cacheRecipes(searchQuery, category, recipes);
+      }
+
       return recipes;
     },
     enabled: true,
-    staleTime: 5 * 60 * 1000, 
+    staleTime: 5 * 60 * 1000,
   });
 };

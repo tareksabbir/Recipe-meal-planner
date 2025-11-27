@@ -15,7 +15,6 @@ const RecipeCardSkeleton = () => {
           className="bg-white rounded-xl overflow-hidden shadow-sm animate-pulse"
         >
           <div className="h-40 md:h-48 bg-gray-200 relative">
-            <div className="absolute top-3 right-3 w-8 h-8 bg-gray-200 rounded-full shadow-md" />
             <div className="absolute bottom-3 left-3 w-20 h-5 bg-gray-300 rounded-full" />
           </div>
 
