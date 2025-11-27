@@ -1,23 +1,39 @@
 import { useMealPlan } from "../../hooks/useMealPlan";
-import { Calendar, Trash2, Plus } from "lucide-react";
+import { Calendar, Trash2, Plus, ChevronLeft } from "lucide-react"; // <-- Import ChevronLeft
 
-export const WeeklyMealPlan = () => {
+interface WeeklyMealPlanProps {
+  onNavigateToDiscover: () => void;
+}
+
+export const WeeklyMealPlan = ({
+  onNavigateToDiscover,
+}: WeeklyMealPlanProps) => {
   const { mealPlan, weekDates, removeMeal, clearPlan } = useMealPlan();
 
   const hasAnyMeals = Object.keys(mealPlan).length > 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 container mx-auto p-4 md:p-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-            Weekly Meal Plan
-          </h2>
-          <p className="text-gray-600 mt-1">
-            Plan your meals for the week ahead
-          </p>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={onNavigateToDiscover}
+            className="p-2 rounded-full hover:bg-white transition-colors"
+            title="Back to Discover"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <div>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+              Weekly Meal Plan
+            </h2>
+            <p className="text-gray-600 mt-1">
+              Plan your meals for the week ahead
+            </p>
+          </div>
         </div>
+
         {hasAnyMeals && (
           <button
             onClick={clearPlan}
@@ -30,7 +46,7 @@ export const WeeklyMealPlan = () => {
       </div>
 
       {/* Calendar Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-10 md:mt-0">
         {weekDates.map((day) => {
           const recipe = mealPlan[day.date];
 
@@ -107,10 +123,7 @@ export const WeeklyMealPlan = () => {
             Start planning by searching for recipes and adding them to your week
           </p>
           <button
-            onClick={() => {
-              // This would navigate to discover view
-              // You'll need to pass this as a prop or use a navigation method
-            }}
+            onClick={onNavigateToDiscover}
             className="bg-emerald-500 text-white px-6 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-medium"
           >
             Discover Recipes
