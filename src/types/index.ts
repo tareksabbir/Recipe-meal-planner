@@ -1,110 +1,94 @@
 // ekhane type gulo k meal db er api rsponse er key gulor name er sathe miliye likha hoise like recipi jokhon check kortesilam tokhon recipi er josn response aschee tar sathe miliye rakhar chesta korsi jate gol mal pakiye na feli 
 
 export interface Recipe {
-  id: number;
-  title: string;
-  description: string;
-  time: string;
-  rating: number;
-  image: string;
-  category: string;
-  bookmarked: boolean;
+  idMeal: string;
+  strMeal: string;
+  strCategory: string;
+  strArea: string;
+  strInstructions: string;
+  strMealThumb: string;
+  strYoutube?: string;
+}
+
+export interface RecipeDetail extends Recipe {
+  ingredients: Ingredient[];
+}
+
+export interface Ingredient {
+  name: string;
+  measure: string;
 }
 
 export interface Category {
-  name: string;
-  icon: string;
+  idCategory: string;
+  strCategory: string;
+  strCategoryThumb: string;
+  strCategoryDescription: string;
 }
 
-// export interface Recipe {
-//   idMeal: string;
-//   strMeal: string;
-//   strCategory: string;
-//   strArea: string;
-//   strInstructions: string;
-//   strMealThumb: string;
-//   strYoutube?: string;
-// }
+export interface MealPlan {
+  [date: string]: RecipeDetail | null;
+}
 
-// export interface RecipeDetail extends Recipe {
-//   ingredients: Ingredient[];
-// }
+export interface ShoppingListItem {
+  id: string;
+  name: string;
+  measure: string;
+  purchased: boolean;
+  recipeIds: string[];
+}
 
-// export interface Ingredient {
-//   name: string;
-//   measure: string;
-// }
+export interface RecipesResponse {
+  meals: Recipe[] | null;
+}
 
-// export interface Category {
-//   idCategory: string;
-//   strCategory: string;
-//   strCategoryThumb: string;
-//   strCategoryDescription: string;
-// }
+export interface RecipeDetailResponse {
+  meals: Recipe[] | null;
+}
 
-// export interface MealPlan {
-//   [date: string]: RecipeDetail | null;
-// }
+export interface CategoriesResponse {
+  categories: Category[];
+}
 
-// export interface ShoppingListItem {
-//   id: string;
-//   name: string;
-//   measure: string;
-//   purchased: boolean;
-//   recipeIds: string[];
-// }
-
-// export interface RecipesResponse {
-//   meals: Recipe[] | null;
-// }
-
-// export interface RecipeDetailResponse {
-//   meals: Recipe[] | null;
-// }
-
-// export interface CategoriesResponse {
-//   categories: Category[];
-// }
-
-// export interface RawMealResponse extends Recipe {
-//   strIngredient1?: string;
-//   strIngredient2?: string;
-//   strIngredient3?: string;
-//   strIngredient4?: string;
-//   strIngredient5?: string;
-//   strIngredient6?: string;
-//   strIngredient7?: string;
-//   strIngredient8?: string;
-//   strIngredient9?: string;
-//   strIngredient10?: string;
-//   strIngredient11?: string;
-//   strIngredient12?: string;
-//   strIngredient13?: string;
-//   strIngredient14?: string;
-//   strIngredient15?: string;
-//   strIngredient16?: string;
-//   strIngredient17?: string;
-//   strIngredient18?: string;
-//   strIngredient19?: string;
-//   strIngredient20?: string;
-//   strMeasure1?: string;
-//   strMeasure2?: string;
-//   strMeasure3?: string;
-//   strMeasure4?: string;
-//   strMeasure5?: string;
-//   strMeasure6?: string;
-//   strMeasure7?: string;
-//   strMeasure8?: string;
-//   strMeasure9?: string;
-//   strMeasure10?: string;
-//   strMeasure11?: string;
-//   strMeasure12?: string;
-//   strMeasure13?: string;
-//   strMeasure14?: string;
-//   strMeasure15?: string;
-//   strMeasure16?: string;
-//   strMeasure17?: string;
-//   strMeasure18?: string;
-//   strMeasure19?: string;
-//   strMeasure20?: string;
-// }
+export interface RawMealResponse extends Recipe {
+  strIngredient1?: string;
+  strIngredient2?: string;
+  strIngredient3?: string;
+  strIngredient4?: string;
+  strIngredient5?: string;
+  strIngredient6?: string;
+  strIngredient7?: string;
+  strIngredient8?: string;
+  strIngredient9?: string;
+  strIngredient10?: string;
+  strIngredient11?: string;
+  strIngredient12?: string;
+  strIngredient13?: string;
+  strIngredient14?: string;
+  strIngredient15?: string;
+  strIngredient16?: string;
+  strIngredient17?: string;
+  strIngredient18?: string;
+  strIngredient19?: string;
+  strIngredient20?: string;
+  strMeasure1?: string;
+  strMeasure2?: string;
+  strMeasure3?: string;
+  strMeasure4?: string;
+  strMeasure5?: string;
+  strMeasure6?: string;
+  strMeasure7?: string;
+  strMeasure8?: string;
+  strMeasure9?: string;
+  strMeasure10?: string;
+  strMeasure11?: string;
+  strMeasure12?: string;
+  strMeasure13?: string;
+  strMeasure14?: string;
+  strMeasure15?: string;
+  strMeasure16?: string;
+  strMeasure17?: string;
+  strMeasure18?: string;
+  strMeasure19?: string;
+  strMeasure20?: string;
+}
