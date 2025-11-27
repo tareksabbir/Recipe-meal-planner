@@ -1,6 +1,6 @@
-import { useMealPlanContext } from '../context/MealPlanContext';
-import { useMemo } from 'react';
-import { format, addDays, startOfWeek } from 'date-fns';
+import { useMealPlanContext } from "../context/MealPlanContext";
+import { useMemo } from "react";
+import { format, addDays, startOfWeek } from "date-fns";
 
 export const useMealPlan = () => {
   const { mealPlan, addMeal, removeMeal, clearPlan } = useMealPlanContext();
@@ -12,9 +12,9 @@ export const useMealPlan = () => {
     return Array.from({ length: 7 }, (_, i) => {
       const date = addDays(start, i);
       return {
-        date: format(date, 'yyyy-MM-dd'),
-        dayName: format(date, 'EEE'),
-        fullDate: format(date, 'MMM dd'),
+        date: format(date, "yyyy-MM-dd"),
+        dayName: format(date, "EEE"),
+        fullDate: format(date, "MMM dd"),
       };
     });
   }, []);
@@ -22,8 +22,8 @@ export const useMealPlan = () => {
   // Get all recipe IDs in the meal plan
   const recipeIds = useMemo(() => {
     return Object.values(mealPlan)
-      .filter(recipe => recipe !== null)
-      .map(recipe => recipe!.idMeal);
+      .filter((recipe) => recipe !== null)
+      .map((recipe) => recipe!.idMeal);
   }, [mealPlan]);
 
   return {
