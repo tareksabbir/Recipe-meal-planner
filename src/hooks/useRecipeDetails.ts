@@ -12,7 +12,6 @@ const getCachedRecipeDetails = (id: string): RecipeDetail | null => {
     if (!cached) return null;
 
     const { data, timestamp } = JSON.parse(cached);
-    // Check if cache is still valid (e.g., 24 hours)
     const isValid = Date.now() - timestamp < 24 * 60 * 60 * 1000;
 
     return isValid ? data : null;
@@ -58,6 +57,6 @@ export const useRecipeDetails = (id: string | null) => {
       return data;
     },
     enabled: !!id,
-    staleTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 10 * 60 * 1000, 
   });
 };
