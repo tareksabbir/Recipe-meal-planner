@@ -67,4 +67,32 @@ export const recipeApi = {
     const results = await Promise.all(promises);
     return results.filter((recipe): recipe is RecipeDetail => recipe !== null);
   },
+
+  getAllRecipes: async (): Promise<RecipesResponse> => {
+    try {
+      const categoriesResponse = await fetch(`${BASE_URL}/categories.php`);
+      if (!categoriesResponse.ok) throw new Error("Failed to fetch categories");
+      const categoriesData: CategoriesResponse =
+        await categoriesResponse.json();
+
+      const categoryPromises = categoriesData.categories.map((cat) =>
+        fetch(`${BASE_URL}/filter.php?c=${cat.strCategory}`)
+          .then((res) => (res.ok ? res.json() : { meals: [] }))
+          .catch(() => ({ meals: [] }))
+      );
+
+      const results = await Promise.all(categoryPromises);
+
+      // Combine all meals and remove duplicates
+      const allMeals = results.flatMap((result) => result.meals || []);
+      const uniqueMeals = Array.from(
+        new Map(allMeals.map((meal) => [meal.idMeal, meal])).values()
+      );
+
+      return { meals: uniqueMeals };
+    } catch (error) {
+      console.error("Error fetching all recipes:", error);
+      return { meals: [] };
+    }
+  },
 };
