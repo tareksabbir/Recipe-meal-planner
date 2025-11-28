@@ -410,6 +410,10 @@ The upfront investment in system design and UI/UX planning significantly acceler
 ![Shopping List](./public/shop.png)
 *Auto-generated from meal plan with ingredient consolidation. Progress tracking and purchase management.*
 
+### Mobile responsive view
+![Mobile responsive view](./public/mobile.png)
+
+
 ---
 
 ## ✅ Core Requirements Checklist
