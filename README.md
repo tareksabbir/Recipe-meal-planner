@@ -42,7 +42,13 @@ npm run build
 npm run preview
 ```
 
-### The application will be available at `https://recipe-meal-planner-gamma.vercel.app/`
+### The application will be available at
+
+```bash
+
+https://recipe-meal-planner-gamma.vercel.app/
+
+```
 
 ### Environment Variables
 
