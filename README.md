@@ -14,7 +14,7 @@ A modern, high-performance meal planning application built with React, TypeScrip
 1. **Clone the repository**
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/tareksabbir/Recipe-meal-planner.git
 cd recipe-meal-planner
 ```
 
